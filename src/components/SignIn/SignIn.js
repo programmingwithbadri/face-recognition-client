@@ -4,22 +4,34 @@ class SignIn extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            onSignInEmail: '',
-            onSignInPassword: ''
+            signInEmail: '',
+            signInPassword: ''
         }
     }
 
     onEmailChanged = (event) => {
-        this.setState( { onSignInEmail : event.target.value})
+        this.setState( { signInEmail : event.target.value})
     }
 
     onPasswordChanged = (event) => {
-        this.setState( { onSignInPassword : event.target.value})
+        this.setState( { signInPassword : event.target.value})
     }
 
     onSignInSubmit = () => {
-        console.log(this.state);
-        this.props.onRouteChange('home');
+        fetch("http://localhost:3001/signin", {
+            method : 'POST',
+            headers : { 'content-type' : 'application/json'},
+            body: JSON.stringify({
+                email: this.state.signInEmail,
+                password: this.state.signInPassword
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data === "Success"){
+                this.props.onRouteChange('home');
+            }
+        })
     }
     
     render() {
@@ -41,7 +53,8 @@ class SignIn extends Component {
                             <label className="pa0 ma0 lh-copy f6 pointer"><input type="checkbox" /> Remember me</label>
                         </fieldset>
                         <div className="">
-                            <input onClick ={this.onSignInSubmit} className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib" type="submit" value="Sign in" />
+                            <input onClick ={this.onSignInSubmit
+                            } className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib" type="submit" value="Sign in" />
                         </div>
                         <div className="lh-copy mt3">
                             <p onClick={() => onRouteChange('register')} className="f6 link dim black db pointer">Register</p>
