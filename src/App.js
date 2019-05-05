@@ -60,7 +60,7 @@ class App extends Component {
 
   onButtonSubmit = () => {
     this.setState({ imageUrl: this.state.input });
-    fetch("http://localhost:3001/imageUrl", {
+    fetch("https://sleepy-castle-79381.herokuapp.com/imageUrl", {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({
@@ -70,7 +70,7 @@ class App extends Component {
       .then(response => response.json())
       .then(response => {
         if (response) {
-          fetch("http://localhost:3001/entries", {
+          fetch("https://sleepy-castle-79381.herokuapp.com/entries", {
             method: 'PUT',
             headers: { 'content-type': 'application/json' },
             body: JSON.stringify({
