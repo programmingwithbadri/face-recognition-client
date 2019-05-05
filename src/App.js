@@ -8,11 +8,6 @@ import Register from './components/Register/Register';
 import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm';
 import FaceRecognition from './components/FaceRecognition/FaceRecognition';
 import Rank from './components/Rank/Rank';
-import Clarifai from 'clarifai';
-
-const app = new Clarifai.App({
-  apiKey: 'f999fcc4060e40fca878946330b0da34'
-})
 
 const particlesOptions = {
   particles: {
@@ -65,8 +60,14 @@ class App extends Component {
 
   onButtonSubmit = () => {
     this.setState({ imageUrl: this.state.input });
-    app.models
-      .predict(Clarifai.FACE_DETECT_MODEL, this.state.input)
+    fetch("http://localhost:3001/imageUrl", {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        input: this.state.input
+      })
+    })
+      .then(response => response.json())
       .then(response => {
         if (response) {
           fetch("http://localhost:3001/entries", {
@@ -77,7 +78,7 @@ class App extends Component {
             })
           }).then(response => response.json())
             .then(count => {
-              this.setState(Object.assign(this.state.user, {entries : count}));
+              this.setState(Object.assign(this.state.user, { entries: count }));
             })
           this.displayFaceBox(this.calculateFaceLocation(response))
         }
@@ -123,9 +124,9 @@ class App extends Component {
           route === 'home'
             ? <div>
               <Logo />
-              <Rank 
-              name={this.state.user.name} 
-              entries={this.state.user.entries} />
+              <Rank
+                name={this.state.user.name}
+                entries={this.state.user.entries} />
               <ImageLinkForm onButtonSubmit={this.onButtonSubmit} onInputChange={this.onInputChange} />
               <FaceRecognition box={box} imageUrl={imageUrl} />
             </div>
