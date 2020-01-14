@@ -24,7 +24,7 @@ const particlesOptions = {
 const initialState = {
   input: '',
   imageUrl: '',
-  box: {},
+  boxes: [],
   route: 'signIn',
   isSignedIn: false,
   user: {
@@ -80,7 +80,7 @@ class App extends Component {
             .then(count => {
               this.setState(Object.assign(this.state.user, { entries: count }));
             })
-          this.displayFaceBox(this.calculateFaceLocation(response))
+          this.displayFaceBoxes(this.calculateFaceLocations(response))
         }
       }
       )
@@ -97,25 +97,27 @@ class App extends Component {
     this.setState({ route: route });
   }
 
-  calculateFaceLocation = (data) => {
-    const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box;
-    const image = document.getElementById('inputImage');
-    const width = Number(image.width);
-    const height = Number(image.height);
-    return {
-      leftCol: clarifaiFace.left_col * width,
-      topRow: clarifaiFace.top_row * height,
-      rightCol: width - (clarifaiFace.right_col * width),
-      bottomRow: height - (clarifaiFace.bottom_row * height)
-    }
+  calculateFaceLocations = (data) => {
+    return data.outputs[0].data.regions.map(face => {
+      const clarifaiFace = face.region_info.bounding_box;
+      const image = document.getElementById('inputImage');
+      const width = Number(image.width);
+      const height = Number(image.height);
+      return {
+        leftCol: clarifaiFace.left_col * width,
+        topRow: clarifaiFace.top_row * height,
+        rightCol: width - (clarifaiFace.right_col * width),
+        bottomRow: height - (clarifaiFace.bottom_row * height)
+      }
+    })
   }
 
-  displayFaceBox = (box) => {
-    this.setState({ box: box });
+  displayFaceBoxes = (boxes) => {
+    this.setState({ boxes: boxes });
   }
 
   render() {
-    const { route, box, imageUrl, isSignedIn } = this.state;
+    const { route, boxes, imageUrl, isSignedIn } = this.state;
     return (
       <div className="App">
         <Particles className="particles" params={particlesOptions} />
@@ -128,7 +130,7 @@ class App extends Component {
                 name={this.state.user.name}
                 entries={this.state.user.entries} />
               <ImageLinkForm onButtonSubmit={this.onButtonSubmit} onInputChange={this.onInputChange} />
-              <FaceRecognition box={box} imageUrl={imageUrl} />
+              <FaceRecognition boxes={boxes} imageUrl={imageUrl} />
             </div>
             : (route === 'signIn'
               ? <SignIn loadUser={this.loadUser} onRouteChange={this.onRouteChange} />
