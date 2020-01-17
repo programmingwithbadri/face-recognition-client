@@ -16,7 +16,7 @@ const FaceRecognition = ({ boxes, imageUrl }) => {
                     ))
                 }
             </div>
-        </div>
+        </div> 
     )
 }
 
