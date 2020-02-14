@@ -25,9 +25,11 @@ export default class ProfileIcon extends Component {
                             src="http://tachyons.io/img/logo.jpg"
                             className="br-100 ba h3 w3 dib" alt="avatar" />
                     </DropdownToggle>
-                    <DropdownMenu 
+                    <DropdownMenu
                         right>
-                        <DropdownItem>View Profile</DropdownItem>
+                        <DropdownItem
+                            onClick={this.props.toggleModal}
+                        >View Profile</DropdownItem>
                         <DropdownItem
                             onClick={() => this.props.onRouteChange('signout')}
                         >
