@@ -45,6 +45,42 @@ class App extends Component {
     this.state = initialState;
   }
 
+  componentDidMount() {
+    const token = window.localStorage.getItem('token');
+
+    // IF any token there in the browser storage,
+    // instead of loading the signin page we could call the signin URL from the home
+    // and check the token is valid one and signin the user
+    if (token) {
+      fetch("https://sleepy-castle-79381.herokuapp.com/signin", {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          'authorization': token
+        }
+      }).then(response => response.json())
+        .then(data => {
+          if (data && data.id) {
+            // Once we got authorized user ID, then we will fetch the user profile
+            fetch(`https://sleepy-castle-79381.herokuapp.com/profiles/${data.id}`, {
+              method: 'get',
+              headers: {
+                'content-type': 'application/json',
+                'authorization': token
+              }
+            }).then(response => response.json())
+              .then(user => {
+                if (user && user.email) {
+                  this.loadUser(user);
+                  this.onRouteChange('home');
+                }
+              })
+          }
+        })
+        .catch(err => console.log(err))
+    }
+  }
+
   loadUser = (data) => {
     this.setState({
       user: {

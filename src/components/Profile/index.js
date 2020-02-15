@@ -22,10 +22,10 @@ export class Profile extends React.Component {
                 formInput: data
             })
         })
-        .then(res => {
-            this.props.toggleModal();
-            this.props.loadUser({ ...this.props.user, data })
-        })
+            .then(res => {
+                this.props.toggleModal();
+                this.props.loadUser({ ...this.props.user, data })
+            })
     }
 
     render() {
