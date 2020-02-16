@@ -17,14 +17,19 @@ export class Profile extends React.Component {
     onProfileUpdate = (data) => {
         fetch(`https://sleepy-castle-79381.herokuapp.com/profiles/${this.props.user.id}`, {
             method: 'POST',
-            headers: { 'content-type': 'application/json' },
+            headers: {
+                'content-type': 'application/json',
+                'authorization': window.localStorage.getItem('token')
+            },
             body: JSON.stringify({
                 formInput: data
             })
         })
             .then(res => {
-                this.props.toggleModal();
-                this.props.loadUser({ ...this.props.user, data })
+                if (res.status === 200) {
+                    this.props.toggleModal();
+                    this.props.loadUser({ ...this.props.user, ...data })
+                }
             })
     }
 
